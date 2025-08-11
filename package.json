@@ -1,0 +1,48 @@
+{
+  "name": "api-node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/server.js",
+  "type": "module",
+  "author": "Kaiky Tupinambá",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/server.js",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "eslint 'src/**/*.{ts,js}' --fix"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "packageManager": "pnpm@10.14.0",
+  "devDependencies": {
+    "@eslint/js": "^9.33.0",
+    "@types/node": "^24.2.1",
+    "@types/swagger-ui-express": "^4.1.8",
+    "eslint": "^9.33.0",
+    "globals": "^16.3.0",
+    "prettier": "3.6.2",
+    "swagger-ui-express": "^5.0.1",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.39.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.13.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.0.1",
+    "helmet": "^8.1.0",
+    "nodemon": "^3.1.10",
+    "path-to-regexp": "^8.2.0",
+    "prisma": "^6.13.0",
+    "reflect-metadata": "^0.2.2",
+    "swagger-jsdoc": "^6.2.8",
+    "winston": "^3.17.0",
+    "zod": "^4.0.17"
+  }
+}
