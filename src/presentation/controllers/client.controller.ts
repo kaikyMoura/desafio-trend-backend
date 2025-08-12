@@ -1,7 +1,6 @@
 import { ClientOptionsDto } from "@/application/dtos/client-options";
 import { ClientResponseDto } from "@/application/dtos/client-response.dto";
 import { CreateClientDto } from "@/application/dtos/create-client.dto";
-import { PageClientDto } from "@/application/dtos/page-client.dto";
 import { UpdateClientDto } from "@/application/dtos/update-client.dto";
 import { Client } from "@/domain/entities/client.entity";
 import { MissingRequiredArgumentsException } from "@/domain/exceptions/missing-argments.exception";
@@ -58,9 +57,7 @@ export class ClientController {
                 return res.status(404).json({ error: "No clients found" });
             }
 
-            const response = new ClientResponseDto<PageClientDto>("Clients found successfully", 200, clients);
-
-            sendJson(res, 200, response);
+            sendJson(res, 200, clients);
         } catch (error) {
             next(error);
         }
@@ -175,7 +172,7 @@ export class ClientController {
 
             await this.clientService.delete(id);
 
-            sendJson(res, 204);
+            sendJson(res, 204, { message: "Client deleted successfully" });
         } catch (error) {
             next(error);
         }
