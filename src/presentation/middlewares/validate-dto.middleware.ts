@@ -3,6 +3,38 @@ import { validate } from "class-validator";
 import { IErrorDetail } from "../../domain/interfaces/api-response.interface";
 
 /**
+ * Converts query parameters like where[name]=value to nested objects
+ * @param query - The query object from Express
+ * @returns The converted object with proper nesting
+ */
+function convertQueryParams(query: Record<string, unknown>): Record<string, unknown> {
+  const result: Record<string, unknown> = {};
+  
+  const NESTED_PARAM_REGEX = /^(\w+)\[(\w+)\]$/;
+
+  for (const [key, value] of Object.entries(query)) {
+    if (key.includes('[') && key.includes(']')) {
+      // Handle nested parameters like where[name], where[email], etc.
+      const match = key.match(NESTED_PARAM_REGEX);
+      if (match) {
+        const [, parentKey, childKey] = match;
+        if (parentKey && childKey) {
+          if (!result[parentKey] || typeof result[parentKey] !== 'object') {
+            result[parentKey] = {};
+          }
+          (result[parentKey] as Record<string, unknown>)[childKey] = value;
+        }
+      }
+    } else {
+      // Handle regular parameters
+      result[key] = value;
+    }
+  }
+  
+  return result;
+}
+
+/**
  * validateDto is a function that validates a DTO.
  * @description This function validates a DTO.
  * @example
@@ -27,8 +59,19 @@ export async function validateDto<T>(dtoClass: new () => T, payload: unknown): P
       return emptyDtoObj;
     }
 
+    // Convert query parameters if it's a query object
+    let processedPayload: unknown = payload;
+    if (typeof payload === 'object' && payload !== null && 'where' in payload === false) {
+      // Check if this looks like a query object with nested parameters
+      const hasNestedParams = Object.keys(payload).some(key => key.includes('['));
+      if (hasNestedParams) {
+        processedPayload = convertQueryParams(payload as Record<string, unknown>);
+        console.log('🔧 Converted query params:', { original: payload, converted: processedPayload });
+      }
+    }
+
     // Convert the payload to an instance of the DTO class
-    const dtoObj = plainToInstance<T, unknown>(dtoClass, payload);
+    const dtoObj = plainToInstance<T, unknown>(dtoClass, processedPayload);
     
     // Verify if the conversion was successful
     if (!dtoObj) {

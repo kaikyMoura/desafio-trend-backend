@@ -10,6 +10,7 @@ import { ILoggerService } from "@/domain/interfaces/logger.service.interface";
 import { ClientMapper } from "@/domain/mappers/client.mapper";
 import { LoggerService } from "../logger/logger.service";
 import prismaClientRepository from "../repositories/client.repository";
+import { Prisma } from "@prisma/client";
 
 
 /**
@@ -50,40 +51,53 @@ export class ClientService {
      * @returns All clients.
      */
     async findMany(options?: ClientOptionsDto): Promise<PageClientDto> {
+        const {
+            page = 1,
+            limit = 10,
+            sort = "createdAt",
+            orderBy = "asc",
+            where,
+            search,
+        } = options ?? {};
+
         this.logger.info("Finding many clients", `${this.name}.findMany`, { options });
 
-        const { page = 1, limit = 10, orderBy = 'asc', where } = options ?? {};
-
-        // Get the count of clients
-        const total = await this.count();
-
-        const clients = await this.clientRepository.findMany({
-            where: where ?? {},
-            orderBy: { createdAt: orderBy },
-            skip: (page - 1) * limit,
-            take: limit,
+        // Monta filtro dinâmico
+        const finalWhere = where ?? this.buildSearchFilter(search);
+        
+        this.logger.info("Filter configuration", `${this.name}.findMany`, { 
+            originalWhere: where, 
+            search, 
+            finalWhere,
+            hasWhereFilter: !!where,
+            hasSearchFilter: !!search
         });
 
-        if (!clients || clients.length === 0) {
-            this.logger.error("No clients found", `${this.name}.findMany`, { where });
-            return {
-                data: [],
-                total: 0,
-                page: page,
-                limit: limit,
-                orderBy: orderBy,
-            };
-        }
+        // Executa consultas em paralelo
+        const [total, clients] = await Promise.all([
+            this.count(),
+            this.clientRepository.findMany({
+                where: finalWhere,
+                orderBy: { [sort]: orderBy },
+                skip: (page - 1) * limit,
+                take: limit,
+            }),
+        ]);
 
-        this.logger.info("Clients found", `${this.name}.findMany`, { clients });
+        if (!clients.length) {
+            this.logger.warn("No clients found", `${this.name}.findMany`, { where: finalWhere });
+        } else {
+            this.logger.info("Clients found", `${this.name}.findMany`, { count: clients.length });
+        }
 
         return {
             data: clients,
             total,
             page,
             limit,
-            orderBy,
-            totalPages: Math.ceil(total / limit)
+            orderBy: orderBy,
+            sort: sort,
+            totalPages: Math.ceil(total / limit),
         };
     }
 
@@ -301,6 +315,36 @@ export class ClientService {
         this.logger.info("Clients counted", `${this.name}.count`, { count });
 
         return this.clientRepository.count();
+    }
+
+    /**
+     * Builds a search filter for the client repository.
+     * @param search - The search string.
+     * @returns The search filter.
+   */
+    private buildSearchFilter(search?: string) {
+        if (!search) return {};
+
+        const searchableFields: (keyof Prisma.ClientWhereInput)[] = [
+            "name",
+            "email",
+            "cnpj",
+            "phone",
+            "sector",
+            "cep",
+            "address",
+            "number",
+            "neighborhood",
+            "city",
+            "state",
+            "complement",
+        ];
+
+        return {
+            OR: searchableFields.map((field) => ({
+                [field]: { contains: search, mode: "insensitive" },
+            })),
+        };
     }
 }
 

@@ -16,6 +16,7 @@ import { Client } from "@/domain/entities/client.entity";
  *  page: 1,
  *  limit: 10,
  *  orderBy: 'asc',
+ *  sort: 'createdAt',
  *  totalPages: 1
  * }
  */
@@ -40,6 +41,10 @@ export class PageClientDto {
    * The order by to use.
    */
   orderBy?: 'asc' | 'desc';
+  /**
+   * The sort to use.
+   */
+  sort?: string;
   /**
    * The total of pages.
    */

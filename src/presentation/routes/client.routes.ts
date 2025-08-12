@@ -146,12 +146,12 @@ const router = Router();
  *           enum: [name, email, cnpj, phone, sector, cep, address, number, neighborhood, city, state, complement, createdAt, updatedAt]
  *           default: "createdAt"
  *           description: Field to sort by
- *         order:
+ *         orderBy:
  *           type: string
  *           enum: [asc, desc]
- *           default: "desc"
- *           description: Sort order
- *         filter:
+ *           default: "asc"
+ *           description: Sort order (ascending or descending)
+ *         where:
  *           type: object
  *           properties:
  *             name:
@@ -183,21 +183,21 @@ const router = Router();
  *           type: array
  *           items:
  *             $ref: '#/components/schemas/Client'
- *         pagination:
- *           type: object
- *           properties:
- *             page:
- *               type: integer
- *               example: 1
- *             limit:
- *               type: integer
- *               example: 10
- *             total:
- *               type: integer
- *               example: 100
- *             totalPages:
- *               type: integer
- *               example: 10
+ *         page:
+ *           type: integer
+ *           example: 1
+ *         limit:
+ *           type: integer
+ *           example: 10
+ *         total:
+ *           type: integer
+ *           example: 100
+ *         orderBy:
+ *           type: string
+ *           example: "asc"
+ *         totalPages:
+ *           type: integer
+ *           example: 10
  *     
  *     ErrorResponse:
  *       type: object
@@ -312,76 +312,61 @@ router.post("/clients", validationMiddleware(CreateClientDto), (req: Request, re
  *         name: search
  *         schema:
  *           type: string
- *         description: Search term for filtering clients
+ *         description: Search term for filtering clients across multiple fields
  *       - in: query
  *         name: sort
  *         schema:
  *           type: string
- *           enum: [name, email, createdAt, updatedAt]
+ *           enum: [name, email, cnpj, phone, sector, cep, address, number, neighborhood, city, state, complement, createdAt, updatedAt]
  *           default: createdAt
  *         description: Field to sort by
  *       - in: query
- *         name: order
+ *         name: orderBy
  *         schema:
  *           type: string
  *           enum: [asc, desc]
- *           default: desc
- *         description: Sort order
+ *           default: asc
+ *         description: Sort order (ascending or descending)
  *       - in: query
- *         name: filter[name]
+ *         name: where[name]
  *         schema:
  *           type: string
- *         description: Filter by name
+ *         description: Filter by exact name match
  *       - in: query
- *         name: filter[email]
+ *         name: where[email]
  *         schema:
  *           type: string
- *         description: Filter by email
+ *         description: Filter by exact email match
  *       - in: query
- *         name: filter[cnpj]
+ *         name: where[cnpj]
  *         schema:
  *           type: string
- *         description: Filter by CNPJ
+ *         description: Filter by exact CNPJ match
  *       - in: query
- *         name: filter[phone]
+ *         name: where[phone]
  *         schema:
  *           type: string
- *         description: Filter by phone
+ *         description: Filter by exact phone match
  *       - in: query
- *         name: filter[sector]
+ *         name: where[sector]
  *         schema:
  *           type: string
- *         description: Filter by sector
+ *         description: Filter by exact sector match
  *       - in: query
- *         name: filter[cep]
+ *         name: where[cep]
  *         schema:
  *           type: string
- *         description: Filter by CEP
+ *         description: Filter by exact CEP match
  *       - in: query
- *         name: filter[address]
+ *         name: where[city]
  *         schema:
  *           type: string
- *         description: Filter by address
+ *         description: Filter by exact city match
  *       - in: query
- *         name: filter[number]
+ *         name: where[state]
  *         schema:
  *           type: string
- *         description: Filter by number
- *       - in: query
- *         name: filter[neighborhood]
- *         schema:
- *           type: string
- *         description: Filter by neighborhood
- *       - in: query
- *         name: filter[city]
- *         schema:
- *           type: string
- *         description: Filter by city
- *       - in: query
- *         name: filter[state]
- *         schema:
- *           type: string
- *         description: Filter by state
+ *         description: Filter by exact state match
  * 
  *     responses:
  *       200:
