@@ -10,6 +10,7 @@ import { IErrorDetail } from "../../domain/interfaces/api-response.interface";
 function convertQueryParams(query: Record<string, unknown>): Record<string, unknown> {
   const result: Record<string, unknown> = {};
   
+  // Regular expression to match nested parameters
   const NESTED_PARAM_REGEX = /^(\w+)\[(\w+)\]$/;
 
   for (const [key, value] of Object.entries(query)) {

@@ -1,5 +1,6 @@
 import { UniqueCnpj } from "@/domain/validators/unique-cnpj.validator";
 import { IsUniqueEmail } from "@/domain/validators/unique-email.validator";
+import { IsUniquePhone } from "@/domain/validators/unique-phone.validator";
 import { IsValidCnpj } from "@/domain/validators/valid-cnpj.validator";
 import { Transform } from "class-transformer";
 import { IsEmail, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength, ValidateIf } from "class-validator";
@@ -30,15 +31,35 @@ export class CreateClientDto {
   name!: string;
 
   @IsOptional()
+  @Transform(({ value }) => {
+    if (value === '' || value === null || value === undefined) {
+      return undefined;
+    }
+    return value;
+  })
+  @ValidateIf((o) => {
+    const email = o.email;
+    return email !== undefined && email !== null && email !== '' && email.trim() !== '';
+  })
   @IsEmail({}, { message: "Email must be a valid email" })
   @MaxLength(255, { message: "Email must not exceed 255 characters" })
-  @ValidateIf((o) => o.email !== undefined && o.email !== '')
   @IsUniqueEmail({ message: "This email is already registered" })
   email?: string;
 
-  @IsString({ message: "Phone must be a string" })
   @IsOptional()
+  @Transform(({ value }) => {
+    if (value === '' || value === null || value === undefined) {
+      return undefined;
+    }
+    return value;
+  })
+  @ValidateIf((o) => {
+    const phone = o.phone;
+    return phone !== undefined && phone !== null && phone !== '' && phone.trim() !== '';
+  })
+  @IsString({ message: "Phone must be a string" })
   @MaxLength(15, { message: "Phone must not exceed 15 characters" })
+  @IsUniquePhone({ message: "This phone is already registered" })
   phone?: string;
 
   @Transform(({ value }: { value: unknown }) => {

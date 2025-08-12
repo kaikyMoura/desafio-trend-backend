@@ -62,7 +62,7 @@ export class ClientService {
 
         this.logger.info("Finding many clients", `${this.name}.findMany`, { options });
 
-        // Monta filtro dinâmico
+        // Builds dynamic filter
         const finalWhere = where ?? this.buildSearchFilter(search);
         
         this.logger.info("Filter configuration", `${this.name}.findMany`, { 
@@ -73,7 +73,7 @@ export class ClientService {
             hasSearchFilter: !!search
         });
 
-        // Executa consultas em paralelo
+        // Executes queries in parallel
         const [total, clients] = await Promise.all([
             this.count(),
             this.clientRepository.findMany({
@@ -203,6 +203,31 @@ export class ClientService {
     }
 
     /**
+     * Check if a phone exists (for validation purposes).
+     * @param phone - The phone to check.
+     * @returns True if the phone exists, false otherwise.
+     */
+    async existsByPhone(phone: string): Promise<boolean> {
+        this.logger.info("Checking if phone exists", `${this.name}.existsByPhone`, { phone });
+        if (!phone) {
+            this.logger.info("Phone is empty, returning false", `${this.name}.existsByPhone`, { phone });
+            return false;
+        }
+
+        try {
+            this.logger.info('🔍 Calling repository.findByPhone with:', `${this.name}.existsByPhone`, { phone });
+            const client = await this.clientRepository.findByPhone(phone);
+            const exists = !!client;
+            this.logger.info('📋 Repository result:', `${this.name}.existsByPhone`, { phone, client: !!client, exists });
+            return exists;
+        } catch (error) {
+            this.logger.error("Error checking phone existence", `${this.name}.existsByPhone`, { phone, error });
+            this.logger.error('❌ Error in existsByPhone:', `${this.name}.existsByPhone`, { phone, error });
+            return false;
+        }
+    }
+
+    /**
      * Check if an email exists (for validation purposes).
      * @param email - The email to check.
      * @returns True if the email exists, false otherwise.
@@ -211,14 +236,19 @@ export class ClientService {
         this.logger.info("Checking if email exists", `${this.name}.existsByEmail`, { email });
 
         if (!email) {
+            this.logger.info("Email is empty, returning false", `${this.name}.existsByEmail`, { email });
             return false;
         }
 
         try {
+            this.logger.info('🔍 Calling repository.findByEmail with:', `${this.name}.existsByEmail`, { email });
             const client = await this.clientRepository.findByEmail(email);
-            return !!client;
+            const exists = !!client;
+            this.logger.info('📋 Repository result:', `${this.name}.existsByEmail`, { email, client: !!client, exists });
+            return exists;
         } catch (error) {
             this.logger.error("Error checking email existence", `${this.name}.existsByEmail`, { email, error });
+            this.logger.error('❌ Error in existsByEmail:', `${this.name}.existsByEmail`, { email, error });
             return false;
         }
     }

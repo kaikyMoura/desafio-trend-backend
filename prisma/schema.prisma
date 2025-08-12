@@ -11,9 +11,9 @@ datasource db {
 model Client {
   id        String   @id @default(uuid())
   name      String   @db.VarChar(255)
-  email     String?   @unique @db.VarChar(255)
+  email     String?  @db.VarChar(255)
   cnpj      String   @unique @db.VarChar(14)
-  phone     String?  @unique @db.VarChar(15)
+  phone     String?  @db.VarChar(15)
 
   cep       String   @db.VarChar(8)
   address   String   @db.VarChar(255)

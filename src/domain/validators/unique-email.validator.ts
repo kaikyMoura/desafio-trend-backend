@@ -5,6 +5,8 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
+import { ILoggerService } from "../interfaces/logger.service.interface";
+import { LoggerService } from "@/infrastructure/logger/logger.service";
 
 /**
  * IsUniqueEmailConstraint is a class that validates if an email is unique.
@@ -12,6 +14,10 @@ import {
  */
 @ValidatorConstraint({ name: 'IsUniqueEmail', async: true })
 export class IsUniqueEmailConstraint implements ValidatorConstraintInterface {
+  private readonly name = 'IsUniqueEmailConstraint';
+
+  private readonly logger: ILoggerService = new LoggerService();
+  
   /**
    * validate is a method that validates if an email is unique.
    * @description This method validates if an email is unique.
@@ -21,15 +27,15 @@ export class IsUniqueEmailConstraint implements ValidatorConstraintInterface {
   async validate(email: string | undefined): Promise<boolean> {
     try {
       if (!email || email.trim() === '') {
-        console.log('📧 Email not provided, skipping validation');
+        this.logger.info('📧 Email not provided, skipping validation', `${this.name}.validate`, { email });
         return true;
       }
 
-      console.log('🔍 Validating email uniqueness:', email);
+      this.logger.info('🔍 Validating email uniqueness:', `${this.name}.validate`, { email });
       const exists = await clientService.existsByEmail(email);
       const isUnique = !exists;
       
-      console.log('📧 Email validation result:', {
+      this.logger.info('📧 Email validation result:', `${this.name}.validate`, {
         email,
         isUnique,
         exists: !!exists,
@@ -37,7 +43,7 @@ export class IsUniqueEmailConstraint implements ValidatorConstraintInterface {
       
       return isUnique;
     } catch (error) {
-      console.error('❌ Error in email validation:', error);
+      this.logger.error('❌ Error in email validation:', `${this.name}.validate`, { email, error });
       return true;
     }
   }

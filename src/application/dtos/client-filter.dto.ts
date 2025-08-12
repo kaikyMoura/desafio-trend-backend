@@ -1,3 +1,4 @@
+import { IsValidCnpj } from "@/domain/validators/valid-cnpj.validator";
 import { Transform } from "class-transformer";
 import { IsEmail, IsOptional, IsString } from "class-validator";
 
@@ -37,6 +38,7 @@ export class ClientFilterDto {
     @Transform(({ value }) => value?.toString())
     @IsString({ message: "Cnpj must be a string" })
     @IsOptional({ message: "Cnpj is optional" })
+    @IsValidCnpj({ message: "Cnpj must be a valid CNPJ" })
     cnpj?: string;
 
     @Transform(({ value }) => value?.toString())
