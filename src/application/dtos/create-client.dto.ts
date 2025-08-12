@@ -41,11 +41,6 @@ export class CreateClientDto {
   @MaxLength(15, { message: "Phone must not exceed 15 characters" })
   phone?: string;
 
-  @IsString({ message: "CNPJ must be a string" })
-  @IsNotEmpty({ message: "CNPJ is required" })
-  @MaxLength(18, { message: "CNPJ must not exceed 18 characters (formatted: 12.345.678/0001-90)" })
-  @MinLength(14, { message: "CNPJ must be at least 14 characters (digits only: 12345678000190)" })
-  @IsValidCnpj({ message: "CNPJ is invalid" })
   @Transform(({ value }: { value: unknown }) => {
     // Remove all non-digit characters to store only numbers
     if (typeof value === 'string') {
@@ -53,6 +48,11 @@ export class CreateClientDto {
     }
     return value;
   })
+  @IsString({ message: "CNPJ must be a string" })
+  @IsNotEmpty({ message: "CNPJ is required" })
+  @MaxLength(18, { message: "CNPJ must not exceed 18 characters (formatted: 12.345.678/0001-90)" })
+  @MinLength(14, { message: "CNPJ must be at least 14 characters (digits only: 12345678000190)" })
+  @IsValidCnpj({ message: "CNPJ is invalid" })
   @UniqueCnpj({ message: "CNPJ is already registered" })
   cnpj!: string;
 

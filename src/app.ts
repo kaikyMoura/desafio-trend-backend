@@ -38,7 +38,7 @@ app.get("/", (req: Request, res: Response) => {
   });
 });
 
-// Global error handler - deve vir ANTES do 404 handler
+// Global error handler
 app.use(errorHandler);
 
 app.use(/(.*)/, (req: Request, res: Response) => {

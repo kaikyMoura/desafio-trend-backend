@@ -163,6 +163,53 @@ export class ClientService {
     }
 
     /**
+     * Check if a CNPJ exists (for validation purposes).
+     * @param cnpj - The CNPJ to check.
+     * @returns True if the CNPJ exists, false otherwise.
+     */
+    async existsByCnpj(cnpj: string): Promise<boolean> {
+        this.logger.info("Checking if CNPJ exists", `${this.name}.existsByCnpj`, { cnpj });
+
+        if (!cnpj) {
+            this.logger.info("CNPJ is empty, returning false", `${this.name}.existsByCnpj`, { cnpj });
+            return false;
+        }
+
+        try {
+            this.logger.info('🔍 Calling repository.findByCnpj with:', `${this.name}.existsByCnpj`, { cnpj });
+            const client = await this.clientRepository.findByCnpj(cnpj);
+            const exists = !!client;
+            this.logger.info('📋 Repository result:', `${this.name}.existsByCnpj`, { cnpj, client: !!client, exists });
+            return exists;
+        } catch (error) {
+            this.logger.error("Error checking CNPJ existence", `${this.name}.existsByCnpj`, { cnpj, error });
+            this.logger.error('❌ Error in existsByCnpj:', `${this.name}.existsByCnpj`, { cnpj, error });
+            return false;
+        }
+    }
+
+    /**
+     * Check if an email exists (for validation purposes).
+     * @param email - The email to check.
+     * @returns True if the email exists, false otherwise.
+     */
+    async existsByEmail(email: string): Promise<boolean> {
+        this.logger.info("Checking if email exists", `${this.name}.existsByEmail`, { email });
+
+        if (!email) {
+            return false;
+        }
+
+        try {
+            const client = await this.clientRepository.findByEmail(email);
+            return !!client;
+        } catch (error) {
+            this.logger.error("Error checking email existence", `${this.name}.existsByEmail`, { email, error });
+            return false;
+        }
+    }
+
+    /**
      * Find a client by its phone.
      * @param phone - The phone of the client to find.
      * @returns The client.

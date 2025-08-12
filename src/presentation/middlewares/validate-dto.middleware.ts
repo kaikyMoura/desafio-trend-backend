@@ -40,6 +40,16 @@ export async function validateDto<T>(dtoClass: new () => T, payload: unknown): P
     
     // If there are errors, throw them with detailed information
     if (errors.length > 0) {
+      console.log('🔍 Validation errors found:', errors.length);
+      errors.forEach((err, index) => {
+        console.log(`❌ Error ${index + 1}:`, {
+          property: err.property,
+          value: err.value,
+          constraints: err.constraints,
+          target: err.target
+        });
+      });
+      
       const errorDetails: IErrorDetail[] = errors.map(err => ({
         field: err.property,
         message: Object.values(err.constraints ?? {}).join(", ")

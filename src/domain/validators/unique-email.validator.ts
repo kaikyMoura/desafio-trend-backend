@@ -26,13 +26,13 @@ export class IsUniqueEmailConstraint implements ValidatorConstraintInterface {
       }
 
       console.log('🔍 Validating email uniqueness:', email);
-      const existingClient = await clientService.findByEmail(email);
-      const isUnique = !existingClient;
+      const exists = await clientService.existsByEmail(email);
+      const isUnique = !exists;
       
       console.log('📧 Email validation result:', {
         email,
         isUnique,
-        existingClient: !!existingClient,
+        exists: !!exists,
       });
       
       return isUnique;
