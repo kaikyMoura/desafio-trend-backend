@@ -298,7 +298,10 @@ export class ClientService {
             throw new NotFoundException("Client not found", 404, "CLIENT_NOT_FOUND");
         }
 
-        const updatedClient = await this.clientRepository.update(id, { ...client });
+        // Remove clientId from the update data before sending to repository
+        const updateData = { ...client };
+        delete (updateData as { clientId?: string }).clientId;
+        const updatedClient = await this.clientRepository.update(id, updateData);
 
         if (!updatedClient) {
             throw new NotFoundException("Client not found", 404, "CLIENT_NOT_FOUND");

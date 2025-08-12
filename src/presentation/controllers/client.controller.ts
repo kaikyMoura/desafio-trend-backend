@@ -141,7 +141,9 @@ export class ClientController {
                 );
             }
 
-            const client = await this.clientService.update(id, req.body as UpdateClientDto);
+            // Add clientId to the DTO for validation context
+            const updateData = { ...req.body, clientId: id } as UpdateClientDto;
+            const client = await this.clientService.update(id, updateData);
 
             const response = new ClientResponseDto("Client updated successfully", 200, client);
 
