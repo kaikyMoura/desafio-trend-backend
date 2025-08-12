@@ -19,6 +19,7 @@ export class ClientMapper {
   static toDomain(client: PrismaClient): Client {
     return new Client({
         ...client,
+        complement: client.complement ?? null,
         deletedAt: client.deletedAt   
     });
   }
@@ -34,6 +35,7 @@ export class ClientMapper {
         id: client.id,
         email: client.email ?? null,
         phone: client.phone ?? null,
+        complement: client.complement ?? null,
         createdAt: client.createdAt ?? new Date(),
         updatedAt: client.updatedAt ?? new Date(),
         deletedAt: client.deletedAt ?? null

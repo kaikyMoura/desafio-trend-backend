@@ -1,4 +1,4 @@
-import { clientService } from "@/infrastructure/services/client.service";
+import clientService from "@/infrastructure/services/client.service";
 import {
   registerDecorator,
   ValidationOptions,

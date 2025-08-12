@@ -9,7 +9,7 @@ import { IPrismaClientRepository } from "@/domain/interfaces/client.repository.i
 import { ILoggerService } from "@/domain/interfaces/logger.service.interface";
 import { ClientMapper } from "@/domain/mappers/client.mapper";
 import { LoggerService } from "../logger/logger.service";
-import { prismaClientRepository } from "../repositories/client.repository";
+import prismaClientRepository from "../repositories/client.repository";
 
 
 /**
@@ -138,6 +138,56 @@ export class ClientService {
     }
 
     /**
+     * Find a client by its CNPJ.
+     * @param cnpj - The CNPJ of the client to find.
+     * @returns The client.
+     */
+    async findByCnpj(cnpj: string): Promise<Client> {
+        this.logger.info("Finding client by CNPJ", `${this.name}.findByCnpj`, { cnpj });
+
+        if (!cnpj) {
+            this.logger.error("CNPJ is required", `${this.name}.findByCnpj`, { cnpj });
+            throw new MissingRequiredArgumentsException("CNPJ is required", 400, "MISSING_ARGUMENTS");
+        }
+
+        const client = await this.clientRepository.findByCnpj(cnpj);
+
+        if (!client) {
+            this.logger.error("Client not found", `${this.name}.findByCnpj`, { cnpj });
+            throw new NotFoundException("Client not found", 404, "CLIENT_NOT_FOUND");
+        }
+
+        this.logger.info("Client found", `${this.name}.findByCnpj`, { client });
+
+        return client;
+    }
+
+    /**
+     * Find a client by its phone.
+     * @param phone - The phone of the client to find.
+     * @returns The client.
+     */
+    async findByPhone(phone: string): Promise<Client> {
+        this.logger.info("Finding client by phone", `${this.name}.findByPhone`, { phone });
+
+        if (!phone) {
+            this.logger.error("Phone is required", `${this.name}.findByPhone`, { phone });
+            throw new MissingRequiredArgumentsException("Phone is required", 400, "MISSING_ARGUMENTS");
+        }
+
+        const client = await this.clientRepository.findByPhone(phone);
+
+        if (!client) {
+            this.logger.error("Client not found", `${this.name}.findByPhone`, { phone });
+            throw new NotFoundException("Client not found", 404, "CLIENT_NOT_FOUND");
+        }
+
+        this.logger.info("Client found", `${this.name}.findByPhone`, { client });
+
+        return client;
+    }
+
+    /**
      * Update a client.
      * @param id - The id of the client to update.
      * @param client - The client to update.
@@ -211,4 +261,4 @@ export class ClientService {
  * clientService is a singleton instance of the ClientService class.
  * @description This service is used to create, find, update and delete clients.
  */
-export const clientService = new ClientService(prismaClientRepository, new LoggerService());
+export default new ClientService(prismaClientRepository, new LoggerService());

@@ -4,7 +4,7 @@ import { CreateClientDto } from "@/application/dtos/create-client.dto";
 import { PageClientDto } from "@/application/dtos/page-client.dto";
 import { UpdateClientDto } from "@/application/dtos/update-client.dto";
 import { Client } from "@/domain/entities/client.entity";
-import { clientService, ClientService } from "@/infrastructure/services/client.service";
+import clientService, { ClientService } from "@/infrastructure/services/client.service";
 import { NextFunction, Request, Response } from "express";
 
 
@@ -161,4 +161,4 @@ export class ClientController {
     }
 }
 
-export const clientController = new ClientController(clientService);
+export default new ClientController(clientService);

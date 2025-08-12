@@ -1,5 +1,7 @@
+import { UniqueCnpj } from "@/domain/validators/unique-cnpj.validator";
 import { IsUniqueEmail } from "@/domain/validators/unique-email.validator";
 import { IsValidCnpj } from "@/domain/validators/valid-cnpj.validator";
+import { Transform } from "class-transformer";
 import { IsEmail, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength, ValidateIf } from "class-validator";
 
 /**
@@ -10,7 +12,7 @@ import { IsEmail, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength, Valida
  *   name: "João Silva",                    // Max: 255 chars
  *   email: "joao@example.com",             // Max: 255 chars (optional)
  *   phone: "(11) 99999-9999",             // Max: 15 chars (optional)
- *   cnpj: "12.345.678/0001-90",          // Exactly: 14 chars
+ *   cnpj: "12.345.678/0001-90",          // 18 chars (formatted) -> stored as 14 digits
  *   cep: "01234-567",                     // Exactly: 8 chars
  *   address: "Rua das Flores, 123",       // Max: 255 chars
  *   number: "123",                         // Max: 10 chars
@@ -41,9 +43,17 @@ export class CreateClientDto {
 
   @IsString({ message: "CNPJ must be a string" })
   @IsNotEmpty({ message: "CNPJ is required" })
-  @MaxLength(18, { message: "CNPJ must not exceed 18 characters" }) // 14 digits + 4 separators
-  @MinLength(18, { message: "CNPJ must be exactly 18 characters" }) // 14 digits + 4 separators
+  @MaxLength(18, { message: "CNPJ must not exceed 18 characters (formatted: 12.345.678/0001-90)" })
+  @MinLength(14, { message: "CNPJ must be at least 14 characters (digits only: 12345678000190)" })
   @IsValidCnpj({ message: "CNPJ is invalid" })
+  @Transform(({ value }: { value: unknown }) => {
+    // Remove all non-digit characters to store only numbers
+    if (typeof value === 'string') {
+      return value.replace(/[^\d]/g, '');
+    }
+    return value;
+  })
+  @UniqueCnpj({ message: "CNPJ is already registered" })
   cnpj!: string;
 
   @IsString({ message: "CEP must be a string" })
@@ -62,11 +72,6 @@ export class CreateClientDto {
   @MaxLength(10, { message: "Number must not exceed 10 characters" })
   number!: string;
 
-  @IsString({ message: "Complement must be a string" })
-  @IsOptional()
-  @MaxLength(255, { message: "Complement must not exceed 255 characters" })
-  complement?: string;
-
   @IsString({ message: "Neighborhood must be a string" })
   @IsNotEmpty({ message: "Neighborhood is required" })
   @MaxLength(255, { message: "Neighborhood must not exceed 255 characters" })
@@ -82,6 +87,11 @@ export class CreateClientDto {
   @MaxLength(2, { message: "State must be exactly 2 characters (e.g., SP, RJ)" })
   @MinLength(2, { message: "State must be exactly 2 characters (e.g., SP, RJ)" })
   state!: string;
+
+  @IsString({ message: "Complement must be a string" })
+  @IsOptional()
+  @MaxLength(255, { message: "Complement must not exceed 255 characters" })
+  complement?: string;
 
   @IsString({ message: "Sector must be a string" })
   @IsNotEmpty({ message: "Sector is required" })

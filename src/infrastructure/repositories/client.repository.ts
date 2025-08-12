@@ -48,6 +48,24 @@ export class PrismaClientRepository implements IPrismaClientRepository {
     }
 
     /**
+     * Find a client by its CNPJ.
+     * @param cnpj - The CNPJ of the client to find.
+     * @returns The client.
+     */
+    async findByCnpj(cnpj: string): Promise<Client | null> {
+        return this.prisma.client.findUnique({ where: { cnpj } });
+    }
+
+    /**
+     * Find a client by its phone.
+     * @param phone - The phone of the client to find.
+     * @returns The client.
+     */
+    async findByPhone(phone: string): Promise<Client | null> {
+        return this.prisma.client.findUnique({ where: { phone } });
+    }
+
+    /**
      * Update a client in the database.
      * @param id - The id of the client to update.
      * @param client - The client to update.
@@ -75,4 +93,4 @@ export class PrismaClientRepository implements IPrismaClientRepository {
     }
 }
 
-export const prismaClientRepository = new PrismaClientRepository(new PrismaService());
+export default new PrismaClientRepository(new PrismaService());

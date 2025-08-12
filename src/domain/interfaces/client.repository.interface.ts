@@ -35,6 +35,20 @@ export interface IPrismaClientRepository {
   findByEmail(email: string): Promise<Client | null>;
 
   /**
+   * Find a client by its CNPJ.
+   * @param cnpj - The CNPJ of the client to find.
+   * @returns The client.
+   */
+  findByCnpj(cnpj: string): Promise<Client | null>;
+
+  /**
+   * Find a client by its name.
+   * @param name - The name of the client to find.
+   * @returns The client.
+   */
+  findByPhone(name: string): Promise<Client | null>;
+
+  /**
    * Update a client in the database.
    * @param id - The id of the client to update.
    * @param client - The client to update.

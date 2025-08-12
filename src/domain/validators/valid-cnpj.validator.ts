@@ -7,6 +7,9 @@ import { registerDecorator, ValidationOptions, ValidatorConstraint, ValidatorCon
 @ValidatorConstraint({ name: 'IsValidCnpj', async: true })
 export class ValidCnpjValidator implements ValidatorConstraintInterface {
     validate(cnpj: string): boolean {
+        if (!cnpj) return false;
+        if (typeof cnpj !== 'string') return false;
+
         cnpj = cnpj.replace(/[^\d]+/g, ""); // Remove all non-digit characters
 
         if (cnpj.length !== 14) return false;
@@ -16,12 +19,12 @@ export class ValidCnpjValidator implements ValidatorConstraintInterface {
       
         // Validate the check digits
         const calculateDigit = (base: string, weights: number[]) => {
-          let soma = 0;
+          let sum = 0;
           for (let i = 0; i < weights.length; i++) {
-            soma += parseInt(base.charAt(i)) * (weights[i] ?? 0);
+            sum += parseInt(base.charAt(i)) * (weights[i] ?? 0);
           }
-          const resto = soma % 11;
-          return resto < 2 ? 0 : 11 - resto;
+          const remainder = sum % 11;
+          return remainder < 2 ? 0 : 11 - remainder;
         };
       
         // Get the base for the check digits
@@ -33,7 +36,7 @@ export class ValidCnpjValidator implements ValidatorConstraintInterface {
         // Validate the second check digit
         const secondCheckDigit = calculateDigit(base + firstCheckDigit, [6,5,4,3,2,9,8,7,6,5,4,3,2]);
       
-        return cnpj.endsWith(`${firstCheckDigit}${secondCheckDigit}`);
+        return cnpj === base + firstCheckDigit.toString() + secondCheckDigit.toString();
     }
 }
 

@@ -7,10 +7,15 @@ import { IsEmail, IsOptional, IsString } from "class-validator";
  * @property email - The email of the client.
  * @property phone - The phone of the client.
  * @property cnpj - The cnpj of the client.
- * @description This DTO is used to filter clients by name, email, phone and cnpj.
+ * @property sector - The sector of the client.
+ * @property cep - The CEP of the client.
+ * @property address - The address of the client.
+ * @description This DTO is used to filter clients by various fields.
  * @example
  * {
- *  cnpj: "1234567890"
+ *  cnpj: "1234567890",
+ *  sector: "Technology",
+ *  cep: "12345678"
  * }
  */
 export class ClientFilterDto {
@@ -38,4 +43,14 @@ export class ClientFilterDto {
     @IsString({ message: "Sector must be a string" })
     @IsOptional({ message: "Sector is optional" })
     sector?: string;
+
+    @Transform(({ value }) => value?.toString())
+    @IsString({ message: "CEP must be a string" })
+    @IsOptional({ message: "CEP is optional" })
+    cep?: string;
+
+    @Transform(({ value }) => value?.toString())
+    @IsString({ message: "Address must be a string" })
+    @IsOptional({ message: "Address is optional" })
+    address?: string;
 }

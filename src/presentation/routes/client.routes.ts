@@ -2,7 +2,7 @@ import { ClientOptionsDto } from "@/application/dtos/client-options";
 import { CreateClientDto } from "@/application/dtos/create-client.dto";
 import { UpdateClientDto } from "@/application/dtos/update-client.dto";
 import { NextFunction, Request, Response, Router } from "express";
-import { clientController } from "../controllers/client.controller";
+import clientController from "../controllers/client.controller";
 import { validationMiddleware } from "../middlewares/validation.middleware";
 
 const router = Router();
@@ -143,7 +143,7 @@ const router = Router();
  *           example: "joão"
  *         sort:
  *           type: string
- *           enum: [name, email, createdAt, updatedAt]
+ *           enum: [name, email, cnpj, phone, sector, cep, address, number, neighborhood, city, state, complement, createdAt, updatedAt]
  *           default: "createdAt"
  *           description: Field to sort by
  *         order:
