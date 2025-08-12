@@ -35,7 +35,12 @@ export class ClientFilterDto {
     @IsOptional({ message: "Phone is optional" })
     phone?: string;
 
-    @Transform(({ value }) => value?.toString())
+    @Transform(({ value }: { value: unknown }) => {
+        if (typeof value === 'string') {
+            return value.replace(/[^\d]/g, '');
+        }
+        return value;
+    })
     @IsString({ message: "Cnpj must be a string" })
     @IsOptional({ message: "Cnpj is optional" })
     @IsValidCnpj({ message: "Cnpj must be a valid CNPJ" })

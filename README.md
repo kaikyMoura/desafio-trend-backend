@@ -2,7 +2,7 @@
 
 # Desafio Trend Midia Backend - 👥 Clients Management API
 
-**Clients Management API** É um backend robusto para gerenciar clientes com validação, paginação, filtragem e documentação API moderna. Este API demonstra princípios de arquitetura limpa, tratamento de erros apropriado e práticas industriais para construir aplicativos Node.js escaláveis.
+**Clients Management API** É um backend robusto para gerenciar clientes com validação avançada, paginação, filtragem inteligente e documentação API moderna. Este API demonstra princípios de arquitetura limpa, tratamento de erros robusto e práticas industriais para construir aplicativos Node.js escaláveis.
 
 </div>
 
@@ -20,9 +20,9 @@
 
 Este projeto serve como uma **implementação do desafio da Trend Midia** para uma API de Gerenciamento de Clientes, demonstrando práticas modernas de desenvolvimento Node.js e princípios de arquitetura limpa.
 
-Construído com **Express.js**, **TypeScript**, **Prisma**, e **class-validator**, a API de Gerenciamento de Clientes fornece um backend robusto para gerenciar clientes com validação, filtragem e paginação abrangentes.
+Construído com **Express.js**, **TypeScript**, **Prisma**, e **class-validator**, a API de Gerenciamento de Clientes fornece um backend robusto para gerenciar clientes com validação avançada, filtragem inteligente e paginação abrangentes.
 
-A API inclui tratamento de erros apropriado, arquitetura de middleware, logging e documentação API moderna usando Swagger/OpenAPI. Esta arquitetura garante código manutenível, separação adequada de preocupações e consumo de API amigável para desenvolvedores.
+A API inclui tratamento de erros robusto, arquitetura de middleware, logging estruturado e documentação API moderna usando Swagger/OpenAPI. Esta arquitetura garante código manutenível, separação adequada de preocupações e consumo de API amigável para desenvolvedores.
 
 ---
 
@@ -30,38 +30,45 @@ A API inclui tratamento de erros apropriado, arquitetura de middleware, logging 
 
 ### 👤 Gerenciamento de Clientes
 - CRUD completo para clientes
-- Filtragem e busca avançada
+- **Filtragem inteligente e busca avançada**
 - Paginação com tamanho de página personalizável
-- Ordenação por múltiplos campos (name, email, createdAt, updatedAt, cnpj, phone, sector)
+- Ordenação por múltiplos campos (name, email, createdAt, updatedAt, cnpj, phone, sector, cep, address, city, state)
 - Suporte para operações em lote
+- **Validação de CNPJ único e formato válido**
 
 ### ✅ Validação & Segurança
 - Validação de entrada abrangente usando class-validator
-- Decoradores de validação personalizados
+- **Decoradores de validação personalizados para unicidade**
+- **Validação condicional para campos opcionais**
 - Transformação de dados com class-transformer
 - Sanitização de entrada e segurança de tipo
-- Tratamento de erros apropriado e logging
+- **Tratamento de erros robusto com códigos padronizados**
+- **Logging estruturado para debugging**
 
 ### 🔍 Filtragem Avançada
-- Filtragem por múltiplos campos (name, email, cnpj, phone, sector)
-- Função de busca em múltiplos campos
-- Construção de consultas complexas com filtros aninhados
+- **Filtros específicos por campo** (where[name], where[email], where[cnpj], etc.)
+- **Busca genérica em múltiplos campos** (search parameter)
+- **Filtros aninhados** com conversão automática de parâmetros
+- Construção de consultas complexas com filtros combinados
 - Opções flexíveis de ordenação e classificação
+- **Suporte para parâmetros de query aninhados**
 
 ### 📚 Documentação da API
-- Documentação interativa Swagger/OpenAPI
-- Descrições de endpoints abrangentes
-- Exemplos de solicitação/resposta
+- Documentação interativa Swagger/OpenAPI 3.0
+- **Descrições atualizadas** de endpoints e parâmetros
+- **Exemplos de filtragem** e busca avançada
 - Definições de esquema e regras de validação
-- Função de teste "tente-o" para testes
+- **Função de teste "tente-o"** para testes interativos
+- **Documentação de códigos de erro** padronizados
 
 ### 🏗️ Arquitetura & Qualidade
 - Princípios de Arquitetura Limpa
 - Design orientado a domínio
 - Implementação do padrão Repository
 - Abstração de camada de serviço
-- Tratamento de erros abrangente
-- Logging estruturado com Winston
+- **Tratamento de erros global com middleware personalizado**
+- **Logging estruturado com Winston**
+- **Validação de DTOs com middleware inteligente**
 
 ---
 
@@ -80,6 +87,7 @@ A API inclui tratamento de erros apropriado, arquitetura de middleware, logging 
 ### ✅ Validação e Transformação
 - **class-validator** - Validação baseada em decoradores
 - **class-transformer** - Transformação de objetos e serialização
+- **Validadores personalizados** para CNPJ, email e phone únicos
 - **Zod** - Validação de esquema e configuração de ambiente
 
 ### 📚 Documentação da API
@@ -164,7 +172,7 @@ http://localhost:5000/docs
 
 #### Clientes
 - `POST /api/clients` - Criar um novo cliente
-- `GET /api/clients` - Obter clientes com paginação e filtragem
+- `GET /api/clients` - Obter clientes com paginação e filtragem avançada
 - `GET /api/clients/:id` - Obter cliente por ID
 - `GET /api/clients/email/:email` - Obter cliente por email
 - `PUT /api/clients/:id` - Atualizar cliente
@@ -182,19 +190,33 @@ Content-Type: application/json
   "email": "joao@example.com",
   "phone": "(11) 99999-9999",
   "cnpj": "12.345.678/0001-90",
+  "cep": "01234-567",
+  "address": "Rua das Flores, 123",
+  "number": "123",
+  "neighborhood": "Centro",
+  "city": "São Paulo",
+  "state": "SP",
   "sector": "Technology"
 }
 ```
 
-#### Obter Clientes com Filtragem
+#### Obter Clientes com Filtragem Avançada
 ```bash
-GET /api/clients?page=1&limit=10&search=joão&sort=name&order=asc
+# Busca genérica em múltiplos campos
+GET /api/clients?page=1&limit=10&search=joão&sort=name&orderBy=asc
+
+# Filtros específicos por campo (exato)
+GET /api/clients?where[name]=João&where[sector]=Technology&orderBy=desc
+
+# Filtros aninhados com conversão automática
+GET /api/clients?where[name]=João&where[city]=São Paulo&page=1&limit=20
 ```
 
-#### Filtrar por Campos Específicos
-```bash
-GET /api/clients?filter[name]=João&filter[sector]=Technology&orderBy=desc
-```
+#### Filtros Disponíveis
+- **Busca genérica**: `?search=termo` (busca em todos os campos)
+- **Filtros específicos**: `?where[field]=value` (filtro exato por campo)
+- **Paginação**: `?page=1&limit=20`
+- **Ordenação**: `?sort=name&orderBy=asc`
 
 ### Formato de Resposta
 Todas as respostas da API seguem um formato consistente:
@@ -266,21 +288,34 @@ curl -X POST http://localhost:5000/api/clients \
     "email": "maria@example.com",
     "phone": "(11) 88888-8888",
     "cnpj": "98.765.432/0001-10",
+    "cep": "01234-567",
+    "address": "Rua das Flores, 123",
+    "number": "123",
+    "neighborhood": "Centro",
+    "city": "São Paulo",
+    "state": "SP",
     "sector": "Finance"
   }'
 ```
 
 ### Obter Clientes com Paginação
 ```bash
-curl "http://localhost:5000/api/clients?page=1&limit=5&sort=name&order=asc"
+curl "http://localhost:5000/api/clients?page=1&limit=5&sort=name&orderBy=asc"
 ```
 
-### Filtrar Clientes
+### Filtros Específicos por Campo
 ```bash
-curl "http://localhost:5000/api/clients?filter[sector]=Technology&filter[name]=João"
+# Filtro por nome exato
+curl "http://localhost:5000/api/clients?where[name]=João&page=1&limit=10"
+
+# Filtro por setor e cidade
+curl "http://localhost:5000/api/clients?where[sector]=Technology&where[city]=São Paulo"
+
+# Filtro por CNPJ
+curl "http://localhost:5000/api/clients?where[cnpj]=12345678000190"
 ```
 
-### Buscar Clientes
+### Busca Genérica em Múltiplos Campos
 ```bash
 curl "http://localhost:5000/api/clients?search=maria&page=1&limit=10"
 ```
@@ -303,22 +338,25 @@ curl -X PUT http://localhost:5000/api/clients/CLIENT_ID \
 ```sql
 model Client {
   id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  phone     String
-  cnpj      String
-  cep       String
-  address   String
-  number    String
-  complement String
-  neighborhood String
-  city      String
-  state     String
-
-  sector    String?
+  name      String   @db.VarChar(255)
+  email     String?  @db.VarChar(255)
+  cnpj      String   @unique @db.VarChar(14)
+  phone     String?  @db.VarChar(15)
+  cep       String   @db.VarChar(8)
+  address   String   @db.VarChar(255)
+  number    String   @db.VarChar(10)
+  neighborhood String   @db.VarChar(255)
+  city      String   @db.VarChar(255)
+  state     String   @db.VarChar(2)
+  complement String?   @db.VarChar(255)
+  sector    String   @db.VarChar(255)
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime?
 
+  @@unique([email], where: "email IS NOT NULL")
+  @@unique([phone], where: "phone IS NOT NULL")
   @@map("clients")
 }
 ```
@@ -326,14 +364,15 @@ model Client {
 ### Principais Características
 - **UUID IDs**: Identificadores seguros, resistentes a colisões
 - **Timestamps**: Rastreamento automático de criação e atualização
-- **Restrições Únicas**: Restrições de unicidade de email aplicadas no nível do banco de dados
-- **Campos Opcionais**: O campo sector é opcional para flexibilidade
+- **Restrições Únicas Condicionais**: Unicidade aplicada apenas para valores não vazios
+- **Campos Opcionais**: Email e phone são opcionais com validação condicional
+- **Validação de CNPJ**: Formato válido e unicidade garantida
 
 ---
 
 ## 10. Tratamento de Erros
 
-### Formato de Resposta de Erro
+### Formato de Resposta de Erro Padronizado
 ```json
 {
   "error": "Error message",
@@ -347,23 +386,156 @@ model Client {
 }
 ```
 
-### Códigos de Erro Comuns
-- `VALIDATION_ERROR` - Validação falhou
-- `CLIENT_NOT_FOUND` - Cliente não existe
-- `EMAIL_ALREADY_EXISTS` - Email já existe
-- `MISSING_ARGUMENTS` - Parâmetros obrigatórios faltando
+### Códigos de Erro Padronizados
+- `VALIDATION_ERROR` - Validação falhou com detalhes específicos
+- `MISSING_ARGUMENTS` - Argumentos obrigatórios faltando com lista específica
+- `NOT_FOUND` - Recurso não encontrado
+- `INVALID_JSON` - Formato JSON inválido
+- `INTERNAL_ERROR` - Erro interno do servidor
 
-### Erros de Validação
-A API fornece erros de validação detalhados para cada campo:
+### Exemplos de Respostas de Erro
+
+#### Validação Falhou
 ```json
 {
-  "error": "CNPJ is already registered",
+  "error": "Validation failed",
+  "code": "VALIDATION_ERROR",
+  "details": [
+    {
+      "field": "cnpj",
+      "message": "CNPJ is invalid"
+    },
+    {
+      "field": "email",
+      "message": "This email is already registered"
+    }
+  ]
+}
+```
+
+#### Argumentos Obrigatórios Faltando
+```json
+{
+  "error": "Missing required arguments: id",
+  "code": "MISSING_ARGUMENTS",
+  "details": [
+    {
+      "field": "id",
+      "message": "The field 'id' is required"
+    }
+  ]
+}
+```
+
+#### JSON Inválido
+```json
+{
+  "error": "Invalid JSON format",
+  "code": "INVALID_JSON",
+  "details": [
+    {
+      "field": "body",
+      "message": "The request body contains invalid JSON"
+    }
+  ]
 }
 ```
 
 ---
 
-## 11. Contribuindo
+## 11. Filtragem e Busca
+
+### Tipos de Filtros
+
+#### 1. Busca Genérica (Search)
+```bash
+GET /api/clients?search=joão
+```
+- Busca em **todos os campos** de texto
+- **Case-insensitive** (não diferencia maiúsculas/minúsculas)
+- Suporta **busca parcial** (não precisa ser exato)
+
+#### 2. Filtros Específicos (Where)
+```bash
+GET /api/clients?where[name]=João&where[sector]=Technology
+```
+- Filtro **exato** por campo específico
+- **Case-sensitive** para precisão
+- Suporta **múltiplos filtros** combinados
+
+#### 3. Parâmetros de Paginação
+```bash
+GET /api/clients?page=1&limit=20&sort=name&orderBy=asc
+```
+- **page**: Número da página (padrão: 1)
+- **limit**: Itens por página (padrão: 10, máximo: 100)
+- **sort**: Campo para ordenação
+- **orderBy**: Direção da ordenação (asc/desc)
+
+### Campos Disponíveis para Filtragem
+- **Identificação**: `name`, `email`, `cnpj`, `phone`
+- **Endereço**: `cep`, `address`, `city`, `state`, `neighborhood`
+- **Negócio**: `sector`
+- **Sistema**: `createdAt`, `updatedAt`
+
+### Exemplos de Consultas Complexas
+
+#### Busca com Filtros Combinados
+```bash
+# Clientes de São Paulo no setor de Technology
+GET /api/clients?where[city]=São Paulo&where[sector]=Technology&page=1&limit=20
+
+# Clientes com nome João em qualquer cidade
+GET /api/clients?where[name]=João&search=SP&page=1&limit=10
+
+# Busca por CNPJ específico
+GET /api/clients?where[cnpj]=12345678000190
+```
+
+---
+
+## 12. Validação e Constraints
+
+### Validações Implementadas
+
+#### CNPJ
+- **Formato válido** usando algoritmo de validação brasileiro
+- **Unicidade** garantida no banco de dados
+- **Transformação automática** para apenas números
+
+#### Email
+- **Formato válido** de email
+- **Unicidade** para valores não vazios
+- **Validação condicional** quando fornecido
+
+#### Phone
+- **Unicidade** para valores não vazios
+- **Validação condicional** quando fornecido
+- **Formato flexível** (aceita formatação)
+
+### Validação Condicional
+```typescript
+@ValidateIf((o) => {
+  const email = o.email;
+  return email !== undefined && email !== null && email !== '' && email.trim() !== '';
+})
+@IsUniqueEmail({ message: "This email is already registered" })
+email?: string;
+```
+
+### Transformação Automática
+```typescript
+@Transform(({ value }) => {
+  if (value === '' || value === null || value === undefined) {
+    return undefined;  // Converte string vazia para undefined
+  }
+  return value;
+})
+```
+
+---
+
+## 13. Contribuindo
 
 ### Fluxo de Desenvolvimento
 1. Fork do repositório
@@ -378,10 +550,12 @@ A API fornece erros de validação detalhados para cada campo:
 - Escreva documentação abrangente
 - Garanta o tratamento de erros apropriado
 - Use mensagens de commit convencionais
+- **Implemente validação condicional** para campos opcionais
+- **Use o sistema de filtragem** implementado
 
 ---
 
-## 12. Troubleshooting
+## 14. Troubleshooting
 
 ### Problemas Comuns
 
@@ -397,7 +571,14 @@ pnpm prisma migrate reset
 #### Problemas de Validação
 - Garanta que todos os campos obrigatórios sejam fornecidos
 - Verifique a validade do formato de email
-- Verifique o formato do CNPJ (registro de empresa brasileiro)
+- **Use CNPJs válidos** (não fictícios)
+- **Campos vazios** são permitidos para email e phone
+
+#### Problemas de Filtragem
+- **Use `where[field]=value`** para filtros exatos
+- **Use `search=termo`** para busca genérica
+- **Parâmetros aninhados** são convertidos automaticamente
+- Verifique os logs para debug de filtros
 
 #### Problemas de Porta
 - Garanta que a porta 5000 esteja disponível
@@ -405,7 +586,7 @@ pnpm prisma migrate reset
 
 ---
 
-## 13. Deploy
+## 15. Deploy
 
 ### Configuração de Produção
 ```bash
@@ -438,16 +619,10 @@ docker run -p 5000:5000 \
 ## 📝 Informações do Projeto
 - **Tipo**: Implementação de Desafio de Código
 - **Objetivo**: Demonstrar habilidades de desenvolvimento Node.js e arquitetura limpa
-- **Status**: Completo e funcional
+- **Status**: Completo e funcional com funcionalidades avançadas
 - **Licença**: MIT
 
 ## Autor 👨‍💻
 **Kaiky Tupinambá** - Fullstack Developer
 
 ---
-
-<div align="center">
-
-**Construído com ❤️ para fins de aprendizado e portfólio**
-
-</div>
