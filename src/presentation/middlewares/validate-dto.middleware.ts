@@ -1,5 +1,6 @@
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
+import { IErrorDetail } from "../../domain/interfaces/api-response.interface";
 
 /**
  * validateDto is a function that validates a DTO.
@@ -37,10 +38,17 @@ export async function validateDto<T>(dtoClass: new () => T, payload: unknown): P
     // Validate the DTO instance
     const errors = await validate(dtoObj as object);
     
-    // If there are errors, throw them
+    // If there are errors, throw them with detailed information
     if (errors.length > 0) {
-      const errorMessages = errors.flatMap(err => Object.values(err.constraints ?? {}));
-      throw new Error(errorMessages.join(", "));
+      const errorDetails: IErrorDetail[] = errors.map(err => ({
+        field: err.property,
+        message: Object.values(err.constraints ?? {}).join(", ")
+      }));
+      
+      const validationError = new Error("Validation failed");
+      (validationError as Error & { details?: IErrorDetail[] }).details = errorDetails;
+      validationError.name = "ValidationError";
+      throw validationError;
     }
     
     // If there are no errors, return the validated object

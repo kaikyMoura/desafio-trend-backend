@@ -38,6 +38,9 @@ app.get("/", (req: Request, res: Response) => {
   });
 });
 
+// Global error handler - deve vir ANTES do 404 handler
+app.use(errorHandler);
+
 app.use(/(.*)/, (req: Request, res: Response) => {
   res.status(404).json({ 
     error: "Not Found", 
@@ -46,8 +49,5 @@ app.use(/(.*)/, (req: Request, res: Response) => {
 });
 
 app.use(loggerMiddleware(new LoggerService()));
-
-// Global error handler
-app.use(errorHandler);
 
 export default app;

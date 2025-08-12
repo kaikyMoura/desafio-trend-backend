@@ -4,6 +4,7 @@ import { CreateClientDto } from "@/application/dtos/create-client.dto";
 import { PageClientDto } from "@/application/dtos/page-client.dto";
 import { UpdateClientDto } from "@/application/dtos/update-client.dto";
 import { Client } from "@/domain/entities/client.entity";
+import { MissingRequiredArgumentsException } from "@/domain/exceptions/missing-argments.exception";
 import clientService, { ClientService } from "@/infrastructure/services/client.service";
 import { NextFunction, Request, Response } from "express";
 
@@ -76,7 +77,12 @@ export class ClientController {
         try {
             const email = req.params.email;
             if (!email) {
-                return res.status(400).json({ error: "Email parameter is required" });
+                throw new MissingRequiredArgumentsException(
+                    "Email parameter is required", 
+                    400, 
+                    "MISSING_EMAIL", 
+                    ["email"]
+                );
             }
 
             const client = await this.clientService.findByEmail(email);
@@ -100,7 +106,12 @@ export class ClientController {
         try {
             const id = req.params.id;
             if (!id) {
-                return res.status(400).json({ error: "ID parameter is required" });
+                throw new MissingRequiredArgumentsException(
+                    "ID parameter is required", 
+                    400, 
+                    "MISSING_ID", 
+                    ["id"]
+                );
             }
 
             const client = await this.clientService.findById(id);
@@ -125,7 +136,12 @@ export class ClientController {
         try {
             const id = req.params.id;
             if (!id) {
-                return res.status(400).json({ error: "ID parameter is required" });
+                throw new MissingRequiredArgumentsException(
+                    "ID parameter is required", 
+                    400, 
+                    "MISSING_ID", 
+                    ["id"]
+                );
             }
 
             const client = await this.clientService.update(id, req.body as UpdateClientDto);
@@ -149,7 +165,12 @@ export class ClientController {
         try {
             const id = req.params.id;
             if (!id) {
-                return res.status(400).json({ error: "ID parameter is required" });
+                throw new MissingRequiredArgumentsException(
+                    "ID parameter is required", 
+                    400, 
+                    "MISSING_ID", 
+                    ["id"]
+                );
             }
 
             await this.clientService.delete(id);

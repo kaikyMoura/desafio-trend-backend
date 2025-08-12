@@ -14,3 +14,20 @@ export interface IApiResponse<T> {
     statusCode?: number;
     error?: string;
 }
+
+/**
+ * ErrorDetail represents a single validation error detail
+ */
+export interface IErrorDetail {
+    field: string;
+    message: string;
+}
+
+/**
+ * ErrorResponse represents the standard error response format
+ */
+export interface IErrorResponse {
+    error: string;
+    code: string;
+    details?: IErrorDetail[];
+}
