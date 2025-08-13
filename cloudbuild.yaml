@@ -1,0 +1,11 @@
+steps:
+  - name: 'gen-lang-client-0320303177/docker-buildkit'
+    args:
+      - build
+      - -f
+      - Dockerfile
+      - -t
+      - gcr.io/gen-lang-client-0320303177/client-manager-api:latest
+      - .
+images:
+  - 'gcr.io/gen-lang-client-0320303177/client-manager-api:latest'
