@@ -99,6 +99,13 @@ A API inclui tratamento de erros robusto, arquitetura de middleware, logging est
 - **ESLint** - Linting de código e qualidade
 - **Prettier** - Formatação de código
 - **tsx** - Execução de TypeScript para desenvolvimento
+- **tsc-alias** - Resolução de path aliases após compilação
+- **tsconfig-paths** - Resolução de path aliases em runtime
+
+### 🐳 Containerização
+- **Docker** - Containerização da aplicação
+- **Docker Compose** - Orquestração de containers
+- **Multi-stage builds** - Otimização de imagens Docker
 
 ---
 
@@ -131,17 +138,76 @@ pnpm run dev
 
 ### Alternativa: Configuração com Docker
 ```bash
-# Usando Docker Compose
+# Usando Docker Compose (recomendado)
+docker-compose up --build -d
+
+# Ver logs em tempo real
+docker-compose logs -f client-manager
+
+# Parar containers
+docker-compose down
+
+# Rebuild completo
+docker-compose up --build -d
+```
+
+#### Comandos Docker Úteis
+```bash
+# Build da imagem
+docker-compose build client-manager
+
+# Start dos containers
 docker-compose up -d
 
-# Ou construa manualmente
-docker build -t desafio-trend-backend .
-docker run -p 5000:5000 desafio-trend-backend
+# Ver status
+docker-compose ps
+
+# Ver logs
+docker-compose logs -f
+
+# Parar containers
+docker-compose down
 ```
 
 ---
 
-## 5. Configuração do Ambiente
+## 5. Docker Setup
+
+### Pré-requisitos Docker
+- **Docker Desktop** instalado e rodando
+- **Docker Compose** disponível
+- Portas **5000** e **5432** disponíveis
+
+### Estrutura dos Containers
+- **client-manager** (API) - Porta 5000
+- **postgres** (Banco) - Porta 5432
+
+### Configuração Docker
+O projeto inclui:
+- **Dockerfile** otimizado com multi-stage build
+- **docker-compose.yml** com PostgreSQL
+- **Build automático** com TypeScript e Prisma
+- **Path aliases resolvidos** com tsc-alias
+
+### Comandos Docker Rápidos
+```bash
+# Desenvolvimento
+docker-compose up --build -d
+
+# Produção
+docker-compose build client-manager
+docker-compose up -d
+
+# Logs
+docker-compose logs -f client-manager
+
+# Parar
+docker-compose down
+```
+
+---
+
+# 6. Configuração do Ambiente
 
 ### Variáveis de Ambiente Necessárias
 ```env
@@ -584,6 +650,28 @@ pnpm prisma migrate reset
 - Garanta que a porta 5000 esteja disponível
 - Verifique outros serviços em execução
 
+#### Problemas Docker
+```bash
+# Container não inicia
+docker-compose logs client-manager
+
+# Rebuild completo
+docker-compose down
+docker-compose up --build -d
+
+# Limpar cache Docker
+docker system prune -a
+
+# Verificar portas em uso
+netstat -ano | findstr :5000
+netstat -ano | findstr :5432
+```
+
+#### Problemas de Swagger
+- **Swagger vazio**: Verifique se os arquivos fonte estão sendo copiados para o container
+- **Path aliases**: O projeto usa `tsc-alias` para resolver `@/*` em produção
+- **Build**: Execute `pnpm run build` para gerar arquivos compilados
+
 ---
 
 ## 15. Deploy
@@ -600,12 +688,31 @@ pnpm run start
 ### Deploy com Docker
 ```bash
 # Construa a imagem Docker
-docker build -t desafio-trend-backend .
+docker-compose build client-manager
 
 # Execute com as variáveis de ambiente
+docker-compose up -d
+
+# Ou execute manualmente
+docker build -t desafio-trend-backend .
 docker run -p 5000:5000 \
   -e DATABASE_URL="your_production_db_url" \
   desafio-trend-backend
+```
+
+### Deploy com Docker Compose (Recomendado)
+```bash
+# Produção
+docker-compose -f docker-compose.yml up -d
+
+# Desenvolvimento
+docker-compose up --build -d
+
+# Verificar status
+docker-compose ps
+
+# Logs em tempo real
+docker-compose logs -f client-manager
 ```
 
 ### Variáveis de Ambiente para Produção

@@ -44,7 +44,7 @@ export class PrismaClientRepository implements IPrismaClientRepository {
      * @returns The client.
      */
     async findByEmail(email: string): Promise<Client | null> {
-        return this.prisma.client.findUnique({ where: { email } });
+        return this.prisma.client.findFirst({ where: { email } });
     }
 
     /**
@@ -62,7 +62,7 @@ export class PrismaClientRepository implements IPrismaClientRepository {
      * @returns The client.
      */
     async findByPhone(phone: string): Promise<Client | null> {
-        return this.prisma.client.findUnique({ where: { phone } });
+        return this.prisma.client.findFirst({ where: { phone } });
     }
 
     /**
@@ -71,7 +71,7 @@ export class PrismaClientRepository implements IPrismaClientRepository {
      * @param client - The client to update.
      * @returns The updated client.
      */
-    async update(id: string, client: Client): Promise<Client> {
+    async update(id: string, client: Partial<Client>): Promise<Client> {
         return this.prisma.client.update({ where: { id }, data: client });
     }
 

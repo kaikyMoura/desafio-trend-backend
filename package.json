@@ -1,30 +1,35 @@
 {
-  "name": "api-node",
+  "name": "client-manager-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "API para gerenciamento de clientes",
   "main": "dist/server.js",
-  "type": "module",
   "author": "Kaiky Tupinambá",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc -p tsconfig.build.json",
-    "start": "node dist/server.js",
+    "build": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
+    "start": "tsx dist/server.js",
     "format": "prettier --write \"src/**/*.ts\"",
-    "lint": "eslint 'src/**/*.{ts,js}' --fix"
+    "lint": "eslint 'src/**/*.{ts,js}' --fix",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio"
   },
   "keywords": [],
-  "license": "ISC",
+  "license": "MIT",
   "packageManager": "pnpm@10.14.0",
   "devDependencies": {
     "@eslint/js": "^9.33.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
     "@types/node": "^24.2.1",
+    "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
     "eslint": "^9.33.0",
     "globals": "^16.3.0",
     "prettier": "3.6.2",
-    "swagger-ui-express": "^5.0.1",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
+    "tsc-alias": "^1.8.16",
     "tsx": "^4.20.3",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.39.0"
@@ -42,7 +47,12 @@
     "prisma": "^6.13.0",
     "reflect-metadata": "^0.2.2",
     "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "tsconfig-paths": "^4.2.0",
     "winston": "^3.17.0",
     "zod": "^4.0.17"
+  },
+  "moduleAliases": {
+    "@": "src"
   }
 }
